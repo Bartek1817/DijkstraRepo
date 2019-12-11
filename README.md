@@ -1,0 +1,2 @@
+# DijkstraRepo
+Projekt Studencki Dijkstra
