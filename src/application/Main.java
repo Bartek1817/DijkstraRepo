@@ -65,6 +65,7 @@ import model.TypeOfGraph;
 /**
  * MoleculeSampleApp
  */
+/// ZMIANA COMMIT TEST
 public class Main extends Application {
 
 	final Group root = new Group();
@@ -102,7 +103,8 @@ public class Main extends Application {
 	List<Vertex> vertexes = new ArrayList<Vertex>();
 	List<Text> grapicalNodesNames = new ArrayList<Text>();// graficzne cyferki nad graficznym wezlem
 	int numberOfNodesInTheGraph = 15;
-	int numberOfConnectionsBetweenNodes = 2;
+	int minimalNumerOfConnection = 4;
+	int maximalNumerOfConnetion = 6;
 	TypeOfGraph typeOfGraph = TypeOfGraph.Normal ; // typ Grafu Normal, Directed, DifferentValues
 	List<LineOn> lines = new ArrayList<LineOn>();
 	List<Edge> edges = new ArrayList<Edge>();
@@ -220,7 +222,7 @@ public class Main extends Application {
 	// funkcja do generowania graficznych po³¹czeñ miêdzy wêz³ami
 	private void generateGraphicalConnectionsBetweenNodes() {
 		for (int i = 1; i <= vertexes.size(); i++) {// dla ka¿dego wezla
-			for (int a = 0; a < numberOfConnectionsBetweenNodes; a++) {// przechodzimy
+			for (int a = 0; a < minimalNumerOfConnection || a >= maximalNumerOfConnetion; a++) {// przechodzimy
 																		// tyle
 																		// razy
 																		// ile
@@ -228,7 +230,9 @@ public class Main extends Application {
 
 				int nodeNUmber = Randomizer.generate(0, vertexes.size() - 1);
 				if ((i - 1 != nodeNUmber)
-						&& !vertexes.get(i - 1).getConnectedNodes().contains(String.valueOf(nodeNUmber))) {
+						&& !vertexes.get(i - 1).getConnectedNodes().contains(String.valueOf(nodeNUmber)) 
+						&& vertexes.get(nodeNUmber).getConnectedNodes().size() <= maximalNumerOfConnetion
+						&& vertexes.get(i-1).getConnectedNodes().size() <= maximalNumerOfConnetion) {
 
 					int weightOfConnection = Randomizer.generate(1, 10);
 					LineOn conectionLine = LineOn.createConnection(vertexes.get(i - 1), vertexes.get(nodeNUmber));
@@ -253,7 +257,7 @@ public class Main extends Application {
 
 					lines.add(conectionLine);
 
-				} else if (vertexes.get(i - 1).getConnectedNodes().size() <= numberOfConnectionsBetweenNodes) {
+				} else if (vertexes.get(i - 1).getConnectedNodes().size() <= minimalNumerOfConnection) {
 					--a;
 				}
 			}
