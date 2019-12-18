@@ -13,6 +13,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextFormatter.Change;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -26,7 +28,7 @@ public class SettingWindow {
 		Stage stage = new Stage();
 		stage.setTitle("Paramety grafu");
 		
-		Pattern validEditingState = Pattern.compile("-?(([1-9][0-9]*)|1)?");
+Pattern validEditingState = Pattern.compile("-?(([1-9][0-9]*)|1)?");
 		
 		UnaryOperator<TextFormatter.Change> filter = c -> {
 			String text = c.getControlNewText();
@@ -53,7 +55,19 @@ public class SettingWindow {
 				return d.toString();
 			}
 		};
-		TextFormatter<Integer> intTextFormater = new TextFormatter<>(converterInt, 10 , filter);
+
+		TextFormatter<String> textFormatter = new TextFormatter<>(filter);
+		TextFormatter<String> textFormatter2 = new TextFormatter<>(filter);
+		TextFormatter<String> textFormatter3 = new TextFormatter<>(filter);
+		TextFormatter<String> textFormatter4 = new TextFormatter<>(filter);
+		TextFormatter<String> textFormatter5 = new TextFormatter<>(filter);
+		TextFormatter<String> textFormatter6 = new TextFormatter<>(filter);
+		TextFormatter<String> textFormatter7 = new TextFormatter<>(filter);
+		TextFormatter<String> textFormatter8 = new TextFormatter<>(filter);
+		
+		
+	
+
 		
 		HBox wholeContent=new HBox(10);
 		wholeContent.setTranslateY(10);
@@ -65,24 +79,29 @@ public class SettingWindow {
 		
 		//LEWA KOLUMNA
 		Label textNumberOfNodes=new Label("Podaj iloœæ wêz³ów:");
-		Label textMaxNumberOfConections=new Label("Podaj maksymaln¹ iloœæ po³¹czeñ:");
+		Label textMaxNumberOfConections=new Label("Podaj zakres iloœci po³¹czeñ:");
 		Label textRangeOfValue=new Label("Podaj zakres wagi po³¹czenia:");
 		Label textNameOfStartedNode=new Label("Wybierz wêze³ pocz¹tkowy:");
 		Label textNameOfEndedNode=new Label("Wybierz wêze³ koñcowy:");
 		Label textTypeOfGraph=new Label("Wybierz typ grafu:");
-		Button buttonGenerateTable=new Button("Generuj Tabelê Wag");
-		namesOfFields.getChildren().addAll(textNumberOfNodes, textMaxNumberOfConections, textRangeOfValue, textNameOfStartedNode, textNameOfEndedNode, textTypeOfGraph);
+		Button buttonGenerateTable=new Button("Generuj Graf");
+		
+		namesOfFields.getChildren().addAll(textNumberOfNodes, textMaxNumberOfConections, textRangeOfValue, textNameOfStartedNode, textNameOfEndedNode, textTypeOfGraph, buttonGenerateTable);
 		//ŒRODKOWA KOLUMNA
 		TextField tfNumberOfNodes=new TextField();
-		TextField tfMaxNumberOfConections=new TextField();
+		tfNumberOfNodes.setTextFormatter(textFormatter);
+		TextField tfMinNumberOfConections=new TextField();
+		tfMinNumberOfConections.setTextFormatter(textFormatter2);
 		TextField tfMinValue=new TextField();
+		tfMinValue.setTextFormatter(textFormatter3);
 		TextField tfNameOfStartedNode=new TextField(); //mo¿na zmieniæ na ChoiceBox czy coœ
+		tfNameOfStartedNode.setTextFormatter(textFormatter4);
 		TextField tfNameOfEndedNode=new TextField();		
+		tfNameOfEndedNode.setTextFormatter(textFormatter5);
 		ComboBox<String> cbTypeOfGraph = new ComboBox<String>(
 				FXCollections.observableArrayList("Graf Nieskierowany", "Graf Skierowany", "Nieskierowany - Ró¿ne wagi"));
-		
+		cbTypeOfGraph.setValue("Graf Skierowany");
 
-		tfNumberOfNodes.setTextFormatter(intTextFormater);
 		/*
 		 * tfMaxNumberOfConections.setTextFormatter(intTextFormater);
 		 * tfMinValue.setTextFormatter(intTextFormater);
@@ -90,21 +109,47 @@ public class SettingWindow {
 		 * tfMaxNumberOfConections.setTextFormatter(intTextFormater);
 		 */
 	
-		valuesOfFieldsMin.getChildren().addAll(tfNumberOfNodes, tfMaxNumberOfConections, tfMinValue, tfNameOfStartedNode, tfNameOfEndedNode, cbTypeOfGraph);
+		valuesOfFieldsMin.getChildren().addAll(tfNumberOfNodes, tfMinNumberOfConections, tfMinValue, tfNameOfStartedNode, tfNameOfEndedNode, cbTypeOfGraph);
 
 		//PRAWA KOLUMNA
 		Label null1=new Label();
 		null1.setVisible(false);
-		Label null2=new Label();
-		null2.setVisible(false);
+		TextField tfMaxNumberOfConections=new TextField();
+		tfMaxNumberOfConections.setLayoutY(tfMinNumberOfConections.getLayoutY());
+		tfMaxNumberOfConections.setTextFormatter(textFormatter6);
 		TextField tfMaxValue=new TextField();
+		tfMaxValue.setTextFormatter(textFormatter7);
+		tfMaxValue.setLayoutY(tfMinValue.getLayoutY());
 		//tfMaxValue.setTextFormatter(intTextFormater);
-		valuesOfFieldsMax.getChildren().addAll(null1, null2, tfMaxValue);
+		valuesOfFieldsMax.getChildren().addAll(null1, tfMaxNumberOfConections, tfMaxValue);
 		
 		
 		root.getChildren().add(wholeContent);
 		stage.setScene(new Scene(root, 500, 500));
 		stage.show();
+		
+		
+	
+		
+		buttonGenerateTable.setOnMouseClicked((MouseEvent e) -> { // Po kliknieciu wykonaj
+			System.out.println("clicccck");
+			if (tfNumberOfNodes.getText().equals("") ||  tfMinNumberOfConections.getText().equals("") ||  tfMinValue.getText().equals("") || 
+					tfMaxNumberOfConections.getText().equals("") ||  tfMaxValue.getText().equals("") ||  tfNameOfStartedNode.getText().equals("") ||  
+					tfNameOfEndedNode.getText().equals(""))
+			{
+				System.out.println("Któreœ Pole jest PUSTE");
+			}
+			else
+			{
+				System.out.println("Wszystkie Pola s¹ pe³ne ");
+				Generator graph = new Generator();
+				graph.startm(Integer.parseInt(tfNumberOfNodes.getText()),Integer.parseInt(tfMinNumberOfConections.getText()),Integer.parseInt(tfMaxNumberOfConections.getText()),
+						Integer.parseInt(tfMinValue.getText()),Integer.parseInt(tfMaxValue.getText())); // ILOŒÆ WEZLOW, MIN POLACZEN, MAX POLACZEN, MIN WAGA, MAX WAGA, TYP GRAPHU
+			}
+		
+		});
 	}
+	
+	
 	
 }
