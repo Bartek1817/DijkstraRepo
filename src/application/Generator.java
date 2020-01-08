@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,8 +19,8 @@ import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -70,7 +71,7 @@ public class Generator {
 	int maximalNumerOfConnetion = 6;
 	int minimalValue = 4;
 	int maximalValue = 6;
-	TypeOfGraph typeOfGraph = TypeOfGraph.Normal ; // typ Grafu Normal, Directed, DifferentValues
+	TypeOfGraph typeOfGraph = TypeOfGraph.Normal; // typ Grafu Normal, Directed, DifferentValues
 	List<LineOn> lines = new ArrayList<LineOn>();
 	List<Edge> edges = new ArrayList<Edge>();
 
@@ -188,16 +189,17 @@ public class Generator {
 	private void generateGraphicalConnectionsBetweenNodes() {
 		for (int i = 1; i <= vertexes.size(); i++) {// dla ka¿dego wezla
 			for (int a = 0; a < minimalNumerOfConnection || a >= maximalNumerOfConnetion; a++) {// przechodzimy
-																		// tyle
-																		// razy
-																		// ile
-																		// zadeklarujemy
+				// tyle
+				// razy
+				// ile
+				// zadeklarujemy 
+				//
 
 				int nodeNUmber = Randomizer.generate(0, vertexes.size() - 1);
 				if ((i - 1 != nodeNUmber)
-						&& !vertexes.get(i - 1).getConnectedNodes().contains(String.valueOf(nodeNUmber)) 
+						&& !vertexes.get(i - 1).getConnectedNodes().contains(String.valueOf(nodeNUmber))
 						&& vertexes.get(nodeNUmber).getConnectedNodes().size() <= maximalNumerOfConnetion
-						&& vertexes.get(i-1).getConnectedNodes().size() <= maximalNumerOfConnetion) {
+						&& vertexes.get(i - 1).getConnectedNodes().size() <= maximalNumerOfConnetion) {
 
 					int weightOfConnection = Randomizer.generate(minimalValue, maximalValue);
 					LineOn conectionLine = LineOn.createConnection(vertexes.get(i - 1), vertexes.get(nodeNUmber));
@@ -214,7 +216,7 @@ public class Generator {
 						vertexes.get(nodeNUmber).getConnectedNodes().add(vertexes.get(i - 1).getName());
 					}
 					if (typeOfGraph.equals(TypeOfGraph.DifferentValues)) { // Graf z ró¿nymi wartoœciami
-																			
+
 						weightOfConnection = Randomizer.generate(1, 10);
 						edges.add(new Edge(vertexes.get(nodeNUmber), vertexes.get(i - 1), weightOfConnection));
 						vertexes.get(nodeNUmber).getConnectedNodes().add(vertexes.get(i - 1).getName());
@@ -301,10 +303,10 @@ public class Generator {
 		btnOpenTableWindow.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				final Group root = new Group();
-				root.getChildren().add(tableOfConnectionsWeight);
 				Stage stage = new Stage();
 				stage.setTitle("Tabela po³¹czeñ");
 				stage.setScene(new Scene(root, 500, 500));
+				root.getChildren().add(tableOfConnectionsWeight);
 				stage.show();
 			}
 		});
@@ -312,7 +314,7 @@ public class Generator {
 	}
 
 	// funkcja do tworzenia grafu i wywolywania funckji algorytmu
-	private LinkedList<Vertex> findTheShortestPathBetween(int nameOfStartedNode, int nameOfEndedNode) {
+	LinkedList<Vertex> findTheShortestPathBetween(int nameOfStartedNode, int nameOfEndedNode) {
 		Graph graph1 = new Graph(vertexes, edges);
 		Algorithm dijkstra = new Algorithm(graph1);
 		dijkstra.execute(vertexes.get(nameOfStartedNode));
@@ -323,6 +325,9 @@ public class Generator {
 
 	// funkcja do zmiany koloru krawêdzi nale¿¹cych do najkrótszej scie¿ki w grafie
 	private void fillTheEgdesOfTheShortesPath(LinkedList<Vertex> path) {
+		for (LineOn i : lines) {
+			i.setMaterial(whiteMaterial);
+		}
 		ArrayList<String> listOfNodesInShortesPath = new ArrayList<String>();
 		if (path == null) {
 			System.out.println("Nie ma takiej œcie¿ki = Pasuje to obs³u¿yæ w GUI nie tylko komunikatem z consoli");
@@ -335,6 +340,7 @@ public class Generator {
 				for (int s = 1; s < listOfNodesInShortesPath.size(); s++) {
 					if (i.getFromNode().getName().toString().equals(listOfNodesInShortesPath.get(s - 1))
 							&& i.getToNode().getName().toString().equals(listOfNodesInShortesPath.get(s))) {
+
 						i.setMaterial(blueMaterial);
 					}
 					if (i.getToNode().getName().toString().equals(listOfNodesInShortesPath.get(s - 1))
@@ -352,21 +358,29 @@ public class Generator {
 		oxygenXform.getChildren().addAll(vertexes);
 		oxygenXform.getChildren().addAll(lines);
 		oxygenXform.getChildren().addAll(grapicalNodesNames);
-		oxygenXform.getChildren().add(initTableWithWeightsOfConnections());
+		initTableWithWeightsOfConnections();
+		// oxygenXform.getChildren().add(initTableWithWeightsOfConnections());
 		oxygenXform.getChildren().add(btnOpenTableWindow);
 		moleculeGroup.getChildren().add(moleculeXform);
 		world.getChildren().addAll(moleculeGroup);
 	}
 
-	public void startm(int edges, int minConection, int maxConetion, int minValue, int maxValue ) {
-		
+	public void startWhole(int edges, int minConection, int maxConetion, int minValue, int maxValue, String type) {
+
 		numberOfNodesInTheGraph = edges;
 		minimalNumerOfConnection = minConection;
 		maximalNumerOfConnetion = maxConetion;
 		minimalValue = minValue;
 		maximalValue = maxValue;
-		typeOfGraph = TypeOfGraph.Normal ; // typ Grafu Normal, Directed, DifferentValues
-		
+		if (type.equals("Graf Skierowany")) {
+			typeOfGraph = TypeOfGraph.Directed; // typ Grafu Normal, Directed, DifferentValues
+		} else if (type.equals("Graf Nieskierowany")) {
+			typeOfGraph = TypeOfGraph.Normal; // typ Grafu Normal, Directed, DifferentValues
+		} else {
+
+			typeOfGraph = TypeOfGraph.DifferentValues; // typ Grafu Normal, Directed, DifferentValues
+		}
+
 		buildScene();
 		buildCamera();
 		setColorsOfTheMaterials();
@@ -375,15 +389,10 @@ public class Generator {
 		generateVertexes();
 		generateGraphicalTextOnTheNode();
 		generateGraphicalConnectionsBetweenNodes();
-		// WYŒWIETLANIE NAJKRÓTSZEJ SCIE¯KI W KONSOLI:
-		System.out.println(findTheShortestPathBetween(0, 5));
-		fillTheEgdesOfTheShortesPath(findTheShortestPathBetween(0, 5));
 
 		addChildrenToTheRoot();
 
-
-		
-		Scene scene = new Scene(root, 1024, 768, true);
+		Scene scene = new Scene(root, 800, 600, true);
 		scene.setFill(Color.DARKSLATEGRAY);
 		handleMouse(scene, world);
 		Stage primaryStage = new Stage();
@@ -394,6 +403,12 @@ public class Generator {
 
 		scene.setCamera(camera);
 
+	}
+
+	public void path(int start, int end) {
+		fillTheEgdesOfTheShortesPath(findTheShortestPathBetween(start, end));
+		// WYŒWIETLANIE NAJKRÓTSZEJ SCIE¯KI W KONSOLI:
+		System.out.println(findTheShortestPathBetween(start, end));
 	}
 
 }
