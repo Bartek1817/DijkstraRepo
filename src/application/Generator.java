@@ -217,7 +217,7 @@ public class Generator {
 					}
 					if (typeOfGraph.equals(TypeOfGraph.DifferentValues)) { // Graf z ró¿nymi wartoœciami
 
-						weightOfConnection = Randomizer.generate(1, 10);
+						weightOfConnection = Randomizer.generate(minimalValue, maximalValue);
 						edges.add(new Edge(vertexes.get(nodeNUmber), vertexes.get(i - 1), weightOfConnection));
 						vertexes.get(nodeNUmber).getConnectedNodes().add(vertexes.get(i - 1).getName());
 					}

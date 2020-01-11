@@ -1,22 +1,19 @@
 package application;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
-import javafx.scene.control.TextFormatter.Change;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -133,50 +130,75 @@ public class SettingWindow {
 				System.out.println("Któreœ Pole jest PUSTE");
 			} else {
 				System.out.println("Wszystkie Pola s¹ pe³ne ");
-			
-				graph.startWhole(Integer.parseInt(tfNumberOfNodes.getText()),
-						Integer.parseInt(tfMinNumberOfConections.getText()),
-						Integer.parseInt(tfMaxNumberOfConections.getText()), Integer.parseInt(tfMinValue.getText()),
-						Integer.parseInt(tfMaxValue.getText()), cbTypeOfGraph.getValue()); // ILOŒÆ WEZLOW, MIN
-																							// POLACZEN, MAX POLACZEN,
-																							// MIN WAGA, MAX WAGA, TYP
-																							// GRAPHU
-				ObservableList<String> listNode = FXCollections.observableArrayList();
+				if (Integer.parseInt(tfMinNumberOfConections.getText().toString()) < Integer
+						.parseInt(tfMaxNumberOfConections.getText().toString())
+						&& Integer.parseInt(tfNumberOfNodes.getText().toString()) > 0
+						&& Integer.parseInt(tfMaxValue.getText().toString()) < 100
+						&& Integer.parseInt(tfMinValue.getText().toString()) > 0
+						&& Integer.parseInt(tfMaxValue.getText().toString()) > 0
+						&& Integer.parseInt(tfMinNumberOfConections.getText().toString()) >0
+						&& Integer.parseInt(tfMaxNumberOfConections.getText().toString()) >0
+						&& Integer.parseInt(tfNumberOfNodes.getText().toString()) > Integer.parseInt(tfMaxNumberOfConections.getText().toString()) )
+				// Mo¿e byæ >= 0 bo Dijkstra dzia³a dla nieujemnych
+				{
+					graph.startWhole(Integer.parseInt(tfNumberOfNodes.getText()),
+							Integer.parseInt(tfMinNumberOfConections.getText()),
+							Integer.parseInt(tfMaxNumberOfConections.getText()), Integer.parseInt(tfMinValue.getText()),
+							Integer.parseInt(tfMaxValue.getText()), cbTypeOfGraph.getValue()); // ILOŒÆ WEZLOW, MIN
+																								// POLACZEN, MAX
+																								// POLACZEN,
+																								// MIN WAGA, MAX WAGA,
+																								// TYP
+																								// GRAPHU
+					ObservableList<String> listNode = FXCollections.observableArrayList();
 
-				for (int i = 0; i < Integer.parseInt(tfNumberOfNodes.getText()); i++) {
-					listNode.add(String.valueOf(i));
+					for (int i = 0; i < Integer.parseInt(tfNumberOfNodes.getText()); i++) {
+						listNode.add(String.valueOf(i));
+					}
+
+					Label null2 = new Label();
+					null2.setVisible(false);
+
+					cbNameOfStartedNode.setItems(listNode);
+					cbNameOfStartedNode.setValue("0");
+
+					cbNameOfEndedNode.setValue("1");
+					cbNameOfEndedNode.setItems(listNode);
+					valuesOfFieldsMin.getChildren().addAll(null2, cbNameOfStartedNode, cbNameOfEndedNode);
+					Label textNameOfStartedNode = new Label("Wybierz wêze³ pocz¹tkowy:");
+					Label textNameOfEndedNode = new Label("Wybierz wêze³ koñcowy:");
+					namesOfFields.getChildren().addAll(textNameOfStartedNode, textNameOfEndedNode);
+					buttonGenerateTable.setVisible(false);
+					tfMaxNumberOfConections.setEditable(false);
+					tfMaxValue.setEditable(false);
+					tfMinNumberOfConections.setEditable(false);
+					tfMinValue.setEditable(false);
+					tfNumberOfNodes.setEditable(false);
+					cbTypeOfGraph.setDisable(false);
+
+					namesOfFields.getChildren().add(buttonGeneratePath);
+				} else {
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("B³¹d");
+					alert.setHeaderText("Wyst¹pi³ b³¹d!");
+					alert.setContentText("Upewnij siê, ¿e: \n"
+							+ "Pola nie posiadaj¹ wartoœci ujemnych i zerowych, \n"
+							+ "Wartoœci pól z oznaczniem 'max' posiadaj¹ wartoœci wiêksze ni¿ pola 'min' \n"
+							+ "Maxymalna iloœæ po³¹czeñ jest mniejsza ni¿ iloœæ wêz³ów \n"
+							+ "");
+
+					alert.showAndWait();
 				}
-				
-				Label null2 = new Label();
-				null2.setVisible(false);
-				
-				cbNameOfStartedNode.setItems(listNode);
-				cbNameOfStartedNode.setValue("0");
-	
-				cbNameOfEndedNode.setValue("1");
-				cbNameOfEndedNode.setItems(listNode);
-				valuesOfFieldsMin.getChildren().addAll(null2,cbNameOfStartedNode, cbNameOfEndedNode);
-				Label textNameOfStartedNode = new Label("Wybierz wêze³ pocz¹tkowy:");
-				Label textNameOfEndedNode = new Label("Wybierz wêze³ koñcowy:");
-				namesOfFields.getChildren().addAll(textNameOfStartedNode, textNameOfEndedNode);
-				buttonGenerateTable.setVisible(false);
-				tfMaxNumberOfConections.setEditable(false);
-				tfMaxValue.setEditable(false);
-				tfMinNumberOfConections.setEditable(false);
-				tfMinValue.setEditable(false);
-				tfNumberOfNodes.setEditable(false);
-				cbTypeOfGraph.setDisable(false);
-				
-				namesOfFields.getChildren().add(buttonGeneratePath);
 			}
-
 		});
-		
+
 		buttonGeneratePath.setOnMouseClicked((MouseEvent e) -> { // Po kliknieciu wykonaj
-		System.out.println("Generuje Œcie¿kê");
-		
-		graph.path(Integer.parseInt(cbNameOfStartedNode.getValue()), Integer.parseInt(cbNameOfEndedNode.getValue()));
-		
+
+			System.out.println("Generuje Œcie¿kê");
+
+			graph.path(Integer.parseInt(cbNameOfStartedNode.getValue()),
+					Integer.parseInt(cbNameOfEndedNode.getValue()));
+
 		});
 	}
 }
