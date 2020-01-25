@@ -3,6 +3,8 @@ package application;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
+import com.sun.jndi.cosnaming.CNNameParser;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
@@ -26,6 +28,8 @@ public class SettingWindow {
 
 	public static void showSettingWindow() {
 		final Group root = new Group();
+		root.setId("roocik");
+		
 		Stage stage = new Stage();
 		stage.setTitle("Paramety grafu");
 
@@ -73,7 +77,7 @@ public class SettingWindow {
 
 		wholeContent.getChildren().addAll(namesOfFields, valuesOfFieldsMin, valuesOfFieldsMax);
 
-		// LEWA KOLUMNA
+		// LEWA KOLUMNA ssda
 		Label textNumberOfNodes = new Label("Podaj iloœæ wêz³ów:");
 		Label textMaxNumberOfConections = new Label("Podaj zakres iloœci po³¹czeñ:");
 		Label textRangeOfValue = new Label("Podaj zakres wagi po³¹czenia:");
@@ -91,7 +95,9 @@ public class SettingWindow {
 		TextField tfMinValue = new TextField();
 		tfMinValue.setTextFormatter(textFormatter3);
 		ComboBox<String> cbNameOfStartedNode = new ComboBox<String>();
+		cbNameOfStartedNode.setTranslateY(25);
 		ComboBox<String> cbNameOfEndedNode = new ComboBox<String>();
+		cbNameOfEndedNode.setTranslateY(25);
 
 		ComboBox<String> cbTypeOfGraph = new ComboBox<String>(FXCollections.observableArrayList("Graf Nieskierowany",
 				"Graf Skierowany", "Nieskierowany - Ró¿ne wagi"));
@@ -113,13 +119,17 @@ public class SettingWindow {
 		tfMaxNumberOfConections.setLayoutY(tfMinNumberOfConections.getLayoutY());
 		tfMaxNumberOfConections.setTextFormatter(textFormatter6);
 		TextField tfMaxValue = new TextField();
+		tfMaxValue.setTranslateY(-8);
 		tfMaxValue.setTextFormatter(textFormatter7);
 		tfMaxValue.setLayoutY(tfMinValue.getLayoutY());
 		// tfMaxValue.setTextFormatter(intTextFormater);
 		valuesOfFieldsMax.getChildren().addAll(null1, tfMaxNumberOfConections, tfMaxValue);
 
 		root.getChildren().add(wholeContent);
-		stage.setScene(new Scene(root, 500, 500));
+		Scene scene=new Scene(root, 500, 500);
+
+		scene.getStylesheets().add("application/application.css");
+		stage.setScene(scene);
 		stage.show();
 
 		buttonGenerateTable.setOnMouseClicked((MouseEvent e) -> { // Po kliknieciu wykonaj
@@ -127,7 +137,11 @@ public class SettingWindow {
 			if (tfNumberOfNodes.getText().equals("") || tfMinNumberOfConections.getText().equals("")
 					|| tfMinValue.getText().equals("") || tfMaxNumberOfConections.getText().equals("")
 					|| tfMaxValue.getText().equals("")) {
-				System.out.println("Któreœ Pole jest PUSTE");
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Puste Pole");
+				alert.setHeaderText("Puste Pole");
+				alert.setContentText("Uzupe³nij wszystkie pola!");
+				alert.showAndWait();
 			} else {
 				System.out.println("Wszystkie Pola s¹ pe³ne ");
 				if (Integer.parseInt(tfMinNumberOfConections.getText().toString()) < Integer

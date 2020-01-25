@@ -295,6 +295,9 @@ public class Generator {
 			tableOfConnectionsWeight.getColumns().add(tableColumnAsNamesOfVertexes);
 		}
 		tableOfConnectionsWeight.setItems(listOfCennectionsWeight);
+		tableOfConnectionsWeight.resize(arrayOfConnectionsWeight[0].length*26, arrayOfConnectionsWeight[0].length*26);
+		tableOfConnectionsWeight.setPrefHeight(arrayOfConnectionsWeight[0].length*26);
+		tableOfConnectionsWeight.setPrefWidth(arrayOfConnectionsWeight[0].length*26);
 		// TWORZENIE I INICJACJA BUTTONA "TABELA":
 		btnOpenTableWindow = new Button("Tabela");
 		btnOpenTableWindow.setTranslateX(100);
@@ -305,7 +308,8 @@ public class Generator {
 				final Group root = new Group();
 				Stage stage = new Stage();
 				stage.setTitle("Tabela po³¹czeñ");
-				stage.setScene(new Scene(root, 500, 500));
+				if(arrayOfConnectionsWeight[0].length<25)
+				stage.setScene(new Scene(root, arrayOfConnectionsWeight[0].length*26, arrayOfConnectionsWeight[0].length*26));
 				root.getChildren().add(tableOfConnectionsWeight);
 				stage.show();
 			}

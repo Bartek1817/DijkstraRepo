@@ -1,1 +1,12 @@
-/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+#roocik
+{
+	
+	-fx-font-family: "Berlin Sans FB";
+	-fx-base: lightgray;
+	-fx-background-color: grey;
+	-fx-base: lightblue;
+}
+.sc
+{
+	-fx-base: gray;
+}
